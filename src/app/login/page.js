@@ -3,6 +3,7 @@
 import { useEffect, useState} from 'react'
 import axios from 'axios';
 import {useSearchParams} from "next/navigation";
+import { useRouter } from 'next/router';
 
 const baseurl = process.env.REACT_APP_API_BASE_URL;
 
@@ -10,8 +11,8 @@ function setUserData(userdata) {
     localStorage.setItem("userData", JSON.stringify(userdata))
 }
 
-function Login() {
-    const [searchParams, setSearchParams] = useSearchParams();
+function Login({searchParams }) {
+    // const [searchParams, setSearchParams] = useSearchParams();
     const ref = searchParams?.get("ref");
 
     const[email, setEmail] = useState("")
