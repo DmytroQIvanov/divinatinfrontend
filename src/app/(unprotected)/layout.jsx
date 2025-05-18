@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 // export const metadata = {
@@ -23,7 +23,11 @@ const Layout = ({ children }) => {
     if (userData) router.push("/dashboard");
   }, []);
 
-  return <div>{children}</div>;
+  return (
+    <div>
+      <Suspense>{children}</Suspense>
+    </div>
+  );
 };
 
 export default Layout;
