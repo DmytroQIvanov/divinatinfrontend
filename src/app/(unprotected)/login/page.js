@@ -1,7 +1,9 @@
 "use client";
-// import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+// import { useNavigate, useSearchParams} from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 
 const baseurl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -9,12 +11,22 @@ function setUserData(userdata) {
   localStorage.setItem("userData", JSON.stringify(userdata));
 }
 
-function AdminLogin() {
+function Login({}) {
+  // const useSearchParams()
+  const searchParams = useSearchParams();
+  const ref = searchParams?.get("ref");
+  // const {ref} = params;
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-
+  useEffect(() => {
+    if (ref) {
+      setError(true);
+      setErrorMsg("登録が完了しました。ログインして下さい。");
+    }
+  }, [ref]);
   const handleSubmit = (event) => {
     event.preventDefault();
     let data = JSON.stringify({
@@ -23,7 +35,7 @@ function AdminLogin() {
     });
     let config = {
       method: "post",
-      url: `${baseurl}/api/admin/login`,
+      url: `${baseurl}/api/login`,
       headers: {
         "Content-Type": "application/json",
       },
@@ -36,23 +48,28 @@ function AdminLogin() {
           refresh: response.data.refresh,
           status: response.data.userStatus,
         });
-        window.location.assign("/admin/dashboard");
+        window.location.assign("/dashboard");
       })
       .catch((err) => {
-        setError(true);
-        setErrorMsg("ユーザーが見つかりません。");
+        if (err.response.data.non_field_errors[0] == "not found") {
+          setError(true);
+          setErrorMsg("ユーザーが見つかりません。");
+        } else {
+          setError(true);
+          setErrorMsg("パスワードが違います。");
+        }
       });
   };
 
   return (
-    <section className="admin-mainvisual">
+    <section className="mainvisual">
       <div id="login" className="register">
         <div className="register-title">
           <img src="/assets/images/logo.svg" alt="" />
           <h2>
             海外サプリメント個人輸入
             <br />
-            <strong>管理者画面</strong>
+            <strong>紹介者専用サイト</strong>
           </h2>
         </div>
         <div className="form clearfix z-10">
@@ -87,6 +104,18 @@ function AdminLogin() {
                 className="form-control form-password"
               />
             </div>
+            <div className="form-col">
+              <input
+                type="checkbox"
+                id="agree"
+                name="agree"
+                className="form-control"
+                placeholder=""
+              />
+              <label htmlFor="agree">
+                利用規約とプライバシーポリシーに同意します。
+              </label>
+            </div>
             <input
               type="submit"
               id="login-button"
@@ -94,10 +123,17 @@ function AdminLogin() {
               value="ログイン"
             />
             {error && <p className="register-message">{errorMsg}</p>}
+            <a
+              href="/register"
+              id="register"
+              className="btn btn-primary btn-lg btn-block"
+            >
+              新規登録
+            </a>
           </form>
         </div>
       </div>
     </section>
   );
 }
-export default AdminLogin;
+export default Login;

@@ -1,6 +1,7 @@
+'use client'
 import { useState, useEffect } from "react"
 import axios from 'axios';
-const baseurl = import.meta.env.REACT_APP_API_BASE_URL;
+const baseurl = process.env.NEXT_PUBLIC_API_BASE_URL;
 function Detail({id, user, coupon, count, setPrice}){
     const [price_sell, setPriceSell] = useState("");
     const [price_id, setPriceId] = useState("");

@@ -2,13 +2,13 @@
 // import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import Footer from '../components/Footer';
-import Header from '../components/Header';
-import Sitemap from '../components/Sitemap';
+import Footer from '../../components/Footer';
+import Header from '../../components/Header';
+import Sitemap from '../../components/Sitemap';
 const baseurl = process.env.NEXT_PUBLIC_API_BASE_URL;
-function SubPage({page}) {
-    const [title, setTitle] = useState("")
-    const [content, setContent] = useState("")
+
+function DeliveryPage() {
+    const [displayData, setDisplayData] = useState({})
     useEffect(()=>{
         getPageData()
     },[])
@@ -20,27 +20,13 @@ function SubPage({page}) {
         axios(config)
             .then(async (response) => {
                 let tmp_data = {}
-                console.log(response.data)
                 response.data.settings.forEach(element => {
-
                     tmp_data = {...tmp_data, [element.key]:element.value}
+
                 });
-                if(page=="specified")
-                {
-                    setTitle(tmp_data["specified-title"])
-                    setContent(tmp_data["specified-description"])
-                }
-                if(page=="personal"){
-                    setTitle(tmp_data["protected-title"])
-                    setContent(tmp_data["protected-description"])
-                }
-                if(page=="privacy"){
-                    setTitle(tmp_data["privacy-title"])
-                    setContent(tmp_data["privacy-title"])
-                }
+                setDisplayData(tmp_data)
             })
             .catch((err)=>{
-                console.log(err)
 
             })
     }
@@ -62,20 +48,22 @@ function SubPage({page}) {
 
                 <section className="list">
                     <div className="sub-page-title">
-                        {title}
+                        {displayData["delivery-title"]}
                     </div>
                     <div className="contain">
-
+                        <p>{displayData["delivery-main-description"]}</p>
                         <div style={{display:"flex"}}>
-                            <p>{content}</p>
+                            <img style={{minWidth:"200px", minHeight:"200px"}} src={displayData["delivery-image"]}  alt=""/>
+                            <p>{displayData["delivery-sub-description"]}</p>
                         </div>
 
                     </div>
                 </section>
             </div>
+            {/* <Footer/> */}
             <Sitemap/>
 
         </>
     )
 }
-export default SubPage;
+export default DeliveryPage;
